@@ -1,0 +1,15 @@
+<header class="app-header">
+	<div class="brand">Hotel Boutique</div>
+
+	<nav class="nav-links">
+		<a routerLink="/reservations" routerLinkActive="active">Reservations</a>
+	</nav>
+
+	<div class="auth-actions">
+		@if (isLoggedIn) {
+			<button class="btn-logout">Log out</button>
+		} @else {
+			<button class="btn-login">Log in</button>
+		}
+	</div>
+</header>

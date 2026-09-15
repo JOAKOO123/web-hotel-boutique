@@ -1,0 +1,35 @@
+.app-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 2rem;
+	background-color: #1f2937;
+	color: #fff;
+
+	.brand {
+		font-weight: 700;
+		font-size: 1.25rem;
+	}
+
+	.nav-links {
+		display: flex;
+		gap: 1.5rem;
+
+		a {
+			color: #d1d5db;
+			text-decoration: none;
+
+			&.active,
+			&:hover {
+				color: #fff;
+			}
+		}
+	}
+
+	.auth-actions button {
+		padding: 0.5rem 1rem;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+	}
+}
