@@ -14,5 +14,13 @@ export const routes: Routes = [
 			import('./features/reservations/reservations-list/reservations-list')
 				.then(m => m.ReservationsList)
 	},
+	{
+		path: 'reservations/new',
+		canActivate: [authGuard],
+		loadComponent: () =>
+			import('./features/reservations/reservations-create/reservations-create')
+				.then(m => m.ReservationsCreate)
+	},
 	{ path: '', redirectTo: 'reservations', pathMatch: 'full' }
 ];
+

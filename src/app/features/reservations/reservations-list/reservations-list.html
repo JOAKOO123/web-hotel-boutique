@@ -1,1 +1,37 @@
-<p>reservations-list works!</p>
+<div class="reservations-list">
+  <div class="header-row">
+    <h1>Reservations</h1>
+    <a routerLink="/reservations/new" class="btn-new">+ New reservation</a>
+  </div>
+
+  <table class="reservations-table">
+    <thead>
+      <tr>
+        <th>Guest</th>
+        <th>Room</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (reservation of reservations; track reservation.id) {
+        <tr>
+          <td>{{ reservation.guestName }}</td>
+          <td>{{ reservation.roomNumber }}</td>
+          <td>{{ reservation.checkInDate }}</td>
+          <td>{{ reservation.checkOutDate }}</td>
+          <td>
+            <span class="status" [class]="reservation.status">
+              {{ reservation.status }}
+            </span>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5">No reservations yet.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
