@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../../core/auth/auth';
@@ -11,13 +11,15 @@ import { Auth } from '../../../core/auth/auth';
   styleUrl: './login.scss'
 })
 export class Login {
+  private auth = inject(Auth);
+  private router = inject(Router);
+
   email = '';
   password = '';
-
-  constructor(private auth: Auth, private router: Router) {}
+  loginAsAdmin = false;
 
   onSubmit(): void {
-    this.auth.login(this.email, this.password);
+    this.auth.login(this.email, this.password, this.loginAsAdmin);
     this.router.navigate(['/reservations']);
   }
 }

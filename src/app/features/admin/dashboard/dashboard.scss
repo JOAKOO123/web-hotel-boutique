@@ -1,0 +1,41 @@
+.dashboard {
+  .summary-cards {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .label {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .chart-section {
+    margin-bottom: 2rem;
+    max-width: 600px;
+
+    .legend {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin: 0 0 0.5rem;
+    }
+
+    canvas {
+      max-height: 300px;
+    }
+  }
+}

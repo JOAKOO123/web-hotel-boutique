@@ -8,8 +8,13 @@
     <label for="password">Password</label>
     <input id="password" type="password" name="password" [(ngModel)]="password" required />
 
+    <label class="checkbox-label">
+      <input type="checkbox" name="loginAsAdmin" [(ngModel)]="loginAsAdmin" />
+      Log in as admin
+    </label>
+
     <button type="submit">Log in</button>
   </form>
 
-  <p class="note">Note: this will be replaced by AWS Cognito login.</p>
-</div><p>login works!</p>
+  <p class="note">Note: this will be replaced by AWS Cognito login (role via Cognito groups).</p>
+</div>

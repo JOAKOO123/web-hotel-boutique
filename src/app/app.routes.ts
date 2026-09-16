@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/auth/admin-guard';
 import { authGuard } from './core/auth/auth-guard';
 
 export const routes: Routes = [
@@ -20,6 +21,12 @@ export const routes: Routes = [
 		loadComponent: () =>
 			import('./features/reservations/reservations-create/reservations-create')
 				.then(m => m.ReservationsCreate)
+	},
+	{
+		path: 'admin',
+		canActivate: [authGuard, adminGuard],
+		loadComponent: () =>
+			import('./features/admin/dashboard/dashboard').then(m => m.Dashboard)
 	},
 	{ path: '', redirectTo: 'reservations', pathMatch: 'full' }
 ];

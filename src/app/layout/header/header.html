@@ -3,6 +3,9 @@
 
 	<nav class="nav-links">
 		<a routerLink="/reservations" routerLinkActive="active">Reservations</a>
+		@if (auth.isAdmin()) {
+			<a routerLink="/admin" routerLinkActive="active">Admin</a>
+		}
 	</nav>
 
 	<div class="auth-actions">

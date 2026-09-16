@@ -1,0 +1,67 @@
+import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Chart, registerables } from 'chart.js';
+import { DashboardStats } from '../services/dashboard-stats';
+
+Chart.register(...registerables);
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [],
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss'
+})
+export class Dashboard implements AfterViewInit {
+  private stats = inject(DashboardStats);
+
+  @ViewChild('revenueChart') revenueChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('occupancyChart') occupancyChartRef!: ElementRef<HTMLCanvasElement>;
+
+  totalRevenue = this.stats.getTotalRevenue();
+  occupancyRate = this.stats.getOccupancyRate();
+
+  ngAfterViewInit(): void {
+    this.renderRevenueChart();
+    this.renderOccupancyChart();
+  }
+
+  private renderRevenueChart(): void {
+    const data = this.stats.getRevenueByRoom();
+
+    new Chart(this.revenueChartRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => `Room ${d.roomNumber}`),
+        datasets: [{
+          label: 'Revenue (CLP)',
+          data: data.map(d => d.revenue),
+          backgroundColor: '#1f2937'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  private renderOccupancyChart(): void {
+    const data = this.stats.getMonthlyOccupancy();
+
+    new Chart(this.occupancyChartRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => d.month),
+        datasets: [{
+          label: 'Reservations',
+          data: data.map(d => d.count),
+          backgroundColor: data.map(d => d.season === 'high' ? '#dc2626' : '#2563eb')
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+}
