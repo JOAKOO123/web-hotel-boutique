@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { Auth } from '../../core/auth/auth';
 
 @Component({
   selector: 'app-header',
@@ -8,5 +9,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './header.scss'
 })
 export class Header {
-  isLoggedIn = false; // will be replaced by AuthService in feature/auth-login
+  constructor(public auth: Auth, private router: Router) {}
+
+  onLogout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 }

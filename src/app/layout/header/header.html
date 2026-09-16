@@ -6,10 +6,10 @@
 	</nav>
 
 	<div class="auth-actions">
-		@if (isLoggedIn) {
-			<button class="btn-logout">Log out</button>
+		@if (auth.isAuthenticated()) {
+			<button class="btn-logout" (click)="onLogout()">Log out</button>
 		} @else {
-			<button class="btn-login">Log in</button>
+			<a routerLink="/login" class="btn-login">Log in</a>
 		}
 	</div>
 </header>

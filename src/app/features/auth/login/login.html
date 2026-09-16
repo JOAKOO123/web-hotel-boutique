@@ -1,0 +1,15 @@
+<div class="login-container">
+  <h1>Log in</h1>
+
+  <form (ngSubmit)="onSubmit()">
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" [(ngModel)]="email" required />
+
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" [(ngModel)]="password" required />
+
+    <button type="submit">Log in</button>
+  </form>
+
+  <p class="note">Note: this will be replaced by AWS Cognito login.</p>
+</div><p>login works!</p>
