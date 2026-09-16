@@ -5,4 +5,5 @@ export interface Reservation {
   checkInDate: string;
   checkOutDate: string;
   status: 'confirmed' | 'pending' | 'cancelled';
+  totalAmount: number;
 }

@@ -1,1 +1,36 @@
-<p>reservations-create works!</p>
+<div class="reservation-form">
+	<h1>New reservation</h1>
+
+	<form (ngSubmit)="onSubmit()">
+		<label for="guestName">Guest name</label>
+		<input id="guestName" type="text" name="guestName" [(ngModel)]="guestName" required />
+
+		<label for="roomNumber">Room</label>
+		<select id="roomNumber" name="roomNumber" [(ngModel)]="roomNumber" required>
+			<option value="" disabled selected>Select a room</option>
+			@for (room of rooms; track room.number) {
+				<option [value]="room.number">
+					Room {{ room.number }} - {{ room.type }} (${{ room.pricePerNight }}/night)
+				</option>
+			}
+		</select>
+
+		<label for="checkInDate">Check-in date</label>
+		<input id="checkInDate" type="date" name="checkInDate" [(ngModel)]="checkInDate" required />
+
+		<label for="checkOutDate">Check-out date</label>
+		<input id="checkOutDate" type="date" name="checkOutDate" [(ngModel)]="checkOutDate" required />
+
+		<label for="status">Status</label>
+		<select id="status" name="status" [(ngModel)]="status">
+			<option value="pending">Pending</option>
+			<option value="confirmed">Confirmed</option>
+			<option value="cancelled">Cancelled</option>
+		</select>
+
+		<div class="actions">
+			<button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+			<button type="submit" class="btn-submit">Save reservation</button>
+		</div>
+	</form>
+</div>
