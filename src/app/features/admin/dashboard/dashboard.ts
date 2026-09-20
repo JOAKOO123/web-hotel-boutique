@@ -35,7 +35,7 @@ export class Dashboard implements AfterViewInit {
         datasets: [{
           label: 'Revenue (CLP)',
           data: data.map(d => d.revenue),
-          backgroundColor: '#1f2937'
+          backgroundColor: '#254c4b'
         }]
       },
       options: {
@@ -55,7 +55,7 @@ export class Dashboard implements AfterViewInit {
         datasets: [{
           label: 'Reservations',
           data: data.map(d => d.count),
-          backgroundColor: data.map(d => d.season === 'high' ? '#dc2626' : '#2563eb')
+          backgroundColor: data.map(d => d.season === 'high' ? '#9c4a3a' : '#a9834f')
         }]
       },
       options: {

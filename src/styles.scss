@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+	--color-ink: #1b2420;
+	--color-paper: #eeece6;
+	--color-paper-raised: #e4e1d8;
+	--color-brass: #a9834f;
+	--color-teal: #254c4b;
+	--color-forest: #3f6b4e;
+	--color-rust: #9c4a3a;
+	--color-border: #d8d4c8;
+
+	--font-display: 'Fraunces', serif;
+	--font-body: 'Inter', sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	background-color: var(--color-paper);
+	color: var(--color-ink);
+	font-family: var(--font-body);
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+h1, h2, h3 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	margin: 0 0 0.5rem;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.35rem; }
+
+a {
+	color: inherit;
+}
+
+button {
+	font-family: var(--font-body);
+}
+
+table {
+	font-variant-numeric: tabular-nums;
+}

@@ -2,37 +2,62 @@
   .header-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    align-items: baseline;
+    margin-bottom: 2rem;
   }
 
   .btn-new {
-    background-color: #1f2937;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
     text-decoration: none;
+    font-size: 0.9rem;
+
+    &:hover {
+      background-color: var(--color-brass);
+    }
   }
 
   .reservations-table {
     width: 100%;
     border-collapse: collapse;
 
-    th, td {
+    th {
       text-align: left;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 0.6rem 1rem;
+      font-weight: 500;
+      font-size: 0.8rem;
+      opacity: 0.6;
+      border-bottom: 1px solid var(--color-ink);
+    }
+
+    td {
+      text-align: left;
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .status {
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       text-transform: capitalize;
+      position: relative;
+      padding-left: 1rem;
 
-      &.confirmed { background: #d1fae5; color: #065f46; }
-      &.pending { background: #fef3c7; color: #92400e; }
-      &.cancelled { background: #fee2e2; color: #991b1b; }
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      &.confirmed::before { background: var(--color-forest); }
+      &.pending::before { background: var(--color-brass); }
+      &.cancelled::before { background: var(--color-rust); }
     }
   }
 }
