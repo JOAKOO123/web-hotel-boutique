@@ -1,18 +1,25 @@
 <header class="app-header">
-	<div class="brand">Hotel Boutique</div>
+	<a routerLink="/" class="brand">Hotel Boutique</a>
 
 	<nav class="nav-links">
-		<a routerLink="/reservations" routerLinkActive="active">Reservations</a>
+		<a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+
 		@if (auth.isAdmin()) {
-			<a routerLink="/admin" routerLinkActive="active">Admin</a>
+			<a routerLink="/reservations" routerLinkActive="active">Reservas</a>
+			<a routerLink="/admin" routerLinkActive="active">Panel</a>
+			<a routerLink="/admin/rooms" routerLinkActive="active">Habitaciones</a>
+		}
+
+		@if (auth.isAuthenticated() && !auth.isAdmin()) {
+			<a routerLink="/my-reservations" routerLinkActive="active">Mis reservas</a>
 		}
 	</nav>
 
 	<div class="auth-actions">
 		@if (auth.isAuthenticated()) {
-			<button class="btn-logout" (click)="onLogout()">Log out</button>
+			<button class="btn-logout" (click)="onLogout()">Cerrar sesión</button>
 		} @else {
-			<a routerLink="/login" class="btn-login">Log in</a>
+			<a routerLink="/login" class="btn-login">Iniciar sesión</a>
 		}
 	</div>
 </header>

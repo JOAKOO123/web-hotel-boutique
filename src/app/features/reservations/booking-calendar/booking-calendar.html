@@ -1,0 +1,44 @@
+<div class="calendar">
+	<div class="calendar-legend">
+		<span class="dot"></span> Tarifa más baja disponible
+	</div>
+
+	<div class="months">
+		@for (month of months; track month.label) {
+			<div class="month">
+				<h3>{{ month.label }}</h3>
+				<div class="weekday-row">
+					<span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+				</div>
+				<div class="days-grid">
+					@for (day of month.days; track $index) {
+						@if (day.isCurrentMonth) {
+							<button
+								type="button"
+								class="day"
+								[class.past]="day.isPast"
+								[class.weekend]="day.isWeekend"
+								[class.selected]="isSelected(day)"
+								[class.in-range]="isInRange(day)"
+								[disabled]="day.isPast"
+								(click)="onDayClick(day)">
+								@if (isLowest(day)) {
+									<span class="lowest-dot"></span>
+								}
+								<span class="day-number">{{ day.day }}</span>
+								<span class="day-price">${{ day.price | number:'1.0-0' }}</span>
+							</button>
+						} @else {
+							<div class="day empty"></div>
+						}
+					}
+				</div>
+			</div>
+		}
+	</div>
+
+	<div class="selection-summary">
+		@if (checkIn) { <span>Entrada: {{ checkIn | date:'d MMM' }}</span> }
+		@if (checkOut) { <span>Salida: {{ checkOut | date:'d MMM' }}</span> }
+	</div>
+</div>

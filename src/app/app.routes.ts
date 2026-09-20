@@ -4,13 +4,17 @@ import { authGuard } from './core/auth/auth-guard';
 
 export const routes: Routes = [
 	{
+		path: '',
+		loadComponent: () => import('./features/home/home').then(m => m.Home)
+	},
+	{
 		path: 'login',
 		loadComponent: () =>
 			import('./features/auth/login/login').then(m => m.Login)
 	},
 	{
 		path: 'reservations',
-		canActivate: [authGuard],
+		canActivate: [authGuard, adminGuard],
 		loadComponent: () =>
 			import('./features/reservations/reservations-list/reservations-list')
 				.then(m => m.ReservationsList)
@@ -23,11 +27,23 @@ export const routes: Routes = [
 				.then(m => m.ReservationsCreate)
 	},
 	{
+		path: 'my-reservations',
+		canActivate: [authGuard],
+		loadComponent: () =>
+			import('./features/reservations/my-reservations/my-reservations')
+				.then(m => m.MyReservations)
+	},
+	{
 		path: 'admin',
 		canActivate: [authGuard, adminGuard],
 		loadComponent: () =>
 			import('./features/admin/dashboard/dashboard').then(m => m.Dashboard)
 	},
-	{ path: '', redirectTo: 'reservations', pathMatch: 'full' }
+	{
+		path: 'admin/rooms',
+		canActivate: [authGuard, adminGuard],
+		loadComponent: () =>
+			import('./features/admin/rooms-status/rooms-status').then(m => m.RoomsStatus)
+	}
 ];
 

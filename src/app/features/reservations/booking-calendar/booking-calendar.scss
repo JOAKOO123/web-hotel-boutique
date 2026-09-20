@@ -1,0 +1,106 @@
+.calendar {
+	.calendar-legend {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.8rem;
+		opacity: 0.7;
+		margin-bottom: 1rem;
+
+		.dot {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: var(--color-brass);
+			display: inline-block;
+		}
+	}
+
+	.months {
+		display: flex;
+		gap: 2rem;
+		flex-wrap: wrap;
+	}
+
+	.month {
+		flex: 1;
+		min-width: 280px;
+
+		h3 {
+			font-family: var(--font-display);
+			font-size: 1.1rem;
+			text-transform: capitalize;
+			margin-bottom: 0.75rem;
+		}
+	}
+
+	.weekday-row {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		font-size: 0.75rem;
+		opacity: 0.5;
+		margin-bottom: 0.4rem;
+
+		span { text-align: center; }
+	}
+
+	.days-grid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 0.3rem;
+	}
+
+	.day {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.15rem;
+		padding: 0.5rem 0.2rem;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		background: var(--color-paper-raised);
+		cursor: pointer;
+		font-family: var(--font-body);
+		color: var(--color-ink);
+
+		.day-number { font-size: 0.85rem; }
+		.day-price { font-size: 0.68rem; opacity: 0.65; }
+
+		&.weekend { background: #f2ede1; }
+		&.past { opacity: 0.3; cursor: not-allowed; }
+
+		&.in-range {
+			background: rgba(169, 131, 79, 0.18);
+			border-color: var(--color-brass);
+		}
+
+		&.selected {
+			background: var(--color-ink);
+			border-color: var(--color-ink);
+			color: var(--color-paper);
+
+			.day-price { opacity: 0.75; color: var(--color-paper); }
+		}
+
+		.lowest-dot {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background: var(--color-brass);
+		}
+
+		&.empty { visibility: hidden; border: none; }
+	}
+
+	.selection-summary {
+		display: flex;
+		gap: 1.5rem;
+		margin-top: 1rem;
+		font-size: 0.9rem;
+	}
+}

@@ -1,20 +1,20 @@
 <div class="login-container">
-  <h1>Log in</h1>
+  <h1>Iniciar sesión</h1>
 
   <form (ngSubmit)="onSubmit()">
-    <label for="email">Email</label>
+    <label for="email">Correo electrónico</label>
     <input id="email" type="email" name="email" [(ngModel)]="email" required />
 
-    <label for="password">Password</label>
+    <label for="password">Contraseña</label>
     <input id="password" type="password" name="password" [(ngModel)]="password" required />
 
     <label class="checkbox-label">
       <input type="checkbox" name="loginAsAdmin" [(ngModel)]="loginAsAdmin" />
-      Log in as admin
+      Iniciar sesión como administrador
     </label>
 
-    <button type="submit">Log in</button>
+    <button type="submit">Iniciar sesión</button>
   </form>
 
-  <p class="note">Note: this will be replaced by AWS Cognito login (role via Cognito groups).</p>
+  <p class="note">Nota: esto será reemplazado por el login de AWS Cognito.</p>
 </div>

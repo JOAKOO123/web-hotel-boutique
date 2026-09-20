@@ -20,6 +20,6 @@ export class Login {
 
   onSubmit(): void {
     this.auth.login(this.email, this.password, this.loginAsAdmin);
-    this.router.navigate(['/reservations']);
+    this.router.navigate([this.loginAsAdmin ? '/reservations' : '/']);
   }
 }

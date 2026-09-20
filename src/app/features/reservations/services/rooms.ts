@@ -16,4 +16,8 @@ export class Rooms {
   getAll() {
     return this.mockRooms();
   }
+
+  getImage(roomNumber: string): string {
+    return `https://picsum.photos/seed/room-${roomNumber}/960/640`;
+  }
 }

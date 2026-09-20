@@ -1,36 +1,45 @@
-<div class="reservation-form">
-	<h1>New reservation</h1>
+<div
+	class="reservation-form"
+	[class.has-background]="selectedRoomImage"
+	[style.background-image]="selectedRoomImage ? 'url(' + selectedRoomImage + ')' : null">
+	<div class="form-overlay">
+		<div class="form-card">
+			<h1>Nueva reserva</h1>
 
-	<form (ngSubmit)="onSubmit()">
-		<label for="guestName">Guest name</label>
-		<input id="guestName" type="text" name="guestName" [(ngModel)]="guestName" required />
+			@if (!roomNumber) {
+				<div class="room-picker">
+					<p class="picker-label">Elige una habitación</p>
+					<div class="rooms-grid">
+						@for (room of rooms; track room.number) {
+							<article class="room-card" (click)="selectRoom(room.number)">
+								<img [src]="roomImage(room.number)" [alt]="'Habitación ' + room.number" />
+								<div class="room-info">
+									<h3>Habitación {{ room.number }} — {{ roomTypeLabels[room.type] }}</h3>
+									<span class="price">${{ room.pricePerNight }} / noche</span>
+								</div>
+							</article>
+						}
+					</div>
+				</div>
+			} @else {
+				<div class="selected-room-bar">
+					<span>Habitación seleccionada: {{ roomNumber }}</span>
+					<button type="button" class="btn-change" (click)="changeRoom()">Cambiar habitación</button>
+				</div>
 
-		<label for="roomNumber">Room</label>
-		<select id="roomNumber" name="roomNumber" [(ngModel)]="roomNumber" required>
-			<option value="" disabled selected>Select a room</option>
-			@for (room of rooms; track room.number) {
-				<option [value]="room.number">
-					Room {{ room.number }} - {{ room.type }} (${{ room.pricePerNight }}/night)
-				</option>
+				<div class="calendar-wrapper">
+					<label>Selecciona las fechas</label>
+					<app-booking-calendar
+						[pricePerNight]="selectedRoomPrice"
+						(rangeSelected)="onRangeSelected($event)">
+					</app-booking-calendar>
+				</div>
+
+				<div class="actions">
+					<button type="button" class="btn-cancel" (click)="onCancel()">Cancelar</button>
+					<button type="button" class="btn-submit" [disabled]="!checkInDate || !checkOutDate" (click)="onSubmit()">Guardar reserva</button>
+				</div>
 			}
-		</select>
-
-		<label for="checkInDate">Check-in date</label>
-		<input id="checkInDate" type="date" name="checkInDate" [(ngModel)]="checkInDate" required />
-
-		<label for="checkOutDate">Check-out date</label>
-		<input id="checkOutDate" type="date" name="checkOutDate" [(ngModel)]="checkOutDate" required />
-
-		<label for="status">Status</label>
-		<select id="status" name="status" [(ngModel)]="status">
-			<option value="pending">Pending</option>
-			<option value="confirmed">Confirmed</option>
-			<option value="cancelled">Cancelled</option>
-		</select>
-
-		<div class="actions">
-			<button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
-			<button type="submit" class="btn-submit">Save reservation</button>
 		</div>
-	</form>
+	</div>
 </div>

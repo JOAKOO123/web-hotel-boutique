@@ -8,6 +8,7 @@ export class Reservations {
     {
       id: '1',
       guestName: 'Camila Rojas',
+      guestEmail: 'camila@example.com',
       roomNumber: '101',
       checkInDate: '2026-09-20',
       checkOutDate: '2026-09-22',
@@ -17,6 +18,7 @@ export class Reservations {
     {
       id: '2',
       guestName: 'Matías Fuentes',
+      guestEmail: 'matias@example.com',
       roomNumber: '204',
       checkInDate: '2026-09-21',
       checkOutDate: '2026-09-23',
@@ -26,6 +28,7 @@ export class Reservations {
     {
       id: '3',
       guestName: 'Valentina Soto',
+      guestEmail: 'valentina@example.com',
       roomNumber: '305',
       checkInDate: '2026-09-18',
       checkOutDate: '2026-09-19',
@@ -36,6 +39,10 @@ export class Reservations {
 
   getAll() {
     return this.mockData();
+  }
+
+  getMine(email: string) {
+    return this.mockData().filter(reservation => reservation.guestEmail === email);
   }
 
   add(reservation: Reservation): void {

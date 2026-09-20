@@ -1,25 +1,25 @@
 <div class="dashboard">
-  <h1>Admin Dashboard</h1>
+  <h1>Panel de administración</h1>
 
   <div class="summary-cards">
     <div class="card">
-      <span class="label">Total revenue</span>
+      <span class="label">Ingresos totales</span>
       <span class="value">${{ totalRevenue.toLocaleString() }}</span>
     </div>
     <div class="card">
-      <span class="label">Occupancy rate</span>
+      <span class="label">Tasa de ocupación</span>
       <span class="value">{{ occupancyRate }}%</span>
     </div>
   </div>
 
   <div class="chart-section">
-    <h2>Revenue by room</h2>
+    <h2>Ingresos por habitación</h2>
     <canvas #revenueChart></canvas>
   </div>
 
   <div class="chart-section">
-    <h2>Reservations by month</h2>
-    <p class="legend">Red = high season - Blue = low season</p>
+    <h2>Reservas por mes</h2>
+    <p class="legend">Rojo = temporada alta · Dorado = temporada baja</p>
     <canvas #occupancyChart></canvas>
   </div>
 </div>
