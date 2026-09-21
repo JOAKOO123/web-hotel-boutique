@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Rooms } from '../reservations/services/rooms';
+import { Habitacion } from '../reservations/models/room.model';
 import { roomTypeLabels } from '../../shared/labels';
 
 @Component({
@@ -27,19 +28,20 @@ export class Home {
     });
   }
 
-  roomImage(roomNumber: string): string {
-    return this.roomsService.getImage(roomNumber);
+  roomImage(habitacion: Habitacion): string {
+    return this.roomsService.getImage(habitacion);
   }
 
-  onSuiteClick(roomNumber: string): void {
-    this.router.navigate(['/reservations/new'], { queryParams: { room: roomNumber } });
+  onSuiteClick(habitacion: Habitacion): void {
+    this.router.navigate(['/reservations/new'], { queryParams: { room: habitacion.id } });
   }
 
-  roomDescription(type: string): string {
+  roomDescription(type: Habitacion['tipo']): string {
     const descriptions: Record<string, string> = {
-      single: 'Un espacio íntimo pensado para viajeros que buscan comodidad sin excesos.',
-      double: 'Amplitud y luz natural, ideal para estadías en pareja o viajes de trabajo prolongados.',
-      suite: 'Nuestro nivel más alto: living independiente, terminaciones en madera noble y vista privilegiada.'
+      INDIVIDUAL: 'Un espacio íntimo pensado para viajeros que buscan comodidad sin excesos.',
+      DOBLE: 'Amplitud y luz natural, ideal para estadías en pareja o viajes de trabajo prolongados.',
+      SUITE: 'Nuestro nivel más alto: living independiente, terminaciones en madera noble y vista privilegiada.',
+      FAMILIAR: 'Un espacio amplio para disfrutar en familia.'
     };
     return descriptions[type] ?? '';
   }

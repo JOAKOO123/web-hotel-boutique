@@ -40,9 +40,9 @@ export class DashboardStats {
       .filter(r => r.status !== 'cancelled');
 
     return rooms.map(room => {
-      const roomReservations = reservations.filter(r => r.roomNumber === room.number);
+      const roomReservations = reservations.filter(r => r.roomNumber === room.id.toString());
       return {
-        roomNumber: room.number,
+        roomNumber: room.id.toString(),
         revenue: roomReservations.reduce((sum, r) => sum + r.totalAmount, 0),
         bookings: roomReservations.length
       };

@@ -1,29 +1,51 @@
-import { Injectable, signal } from '@angular/core';
-
-export type UserRole = 'admin' | 'guest';
+import { Injectable, signal, computed } from '@angular/core';
+import { UserManager, User } from 'oidc-client-ts';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class Auth {
-  // TODO: replace with real Cognito integration + user groups on deployment
-  private loggedIn = signal<boolean>(false);
-  private userRole = signal<UserRole>('guest');
-  private email = signal<string>('');
-  private mockToken = 'mock-jwt-token';
+  private userManager = new UserManager({
+    authority: `https://cognito-idp.${environment.cognito.region}.amazonaws.com/${environment.cognito.userPoolId}`,
+    client_id: environment.cognito.clientId,
+    redirect_uri: `${window.location.origin}/auth/callback`,
+    post_logout_redirect_uri: `${window.location.origin}/`,
+    response_type: 'code',
+    scope: 'openid email profile',
+    automaticSilentRenew: false,
+    loadUserInfo: true
+  });
 
-  isAuthenticated() {
-    return this.loggedIn();
+  private currentUser = signal<User | null>(null);
+  loading = signal(true);
+
+  isAuthenticated = computed(() => !!this.currentUser() && !this.currentUser()!.expired);
+
+  isAdmin = computed(() => {
+    const groups = this.currentUser()?.profile?.['cognito:groups'] as string[] | undefined;
+    return !!groups?.includes('ADMIN');
+  });
+
+  async initialize(): Promise<void> {
+    const user = await this.userManager.getUser();
+    this.currentUser.set(user);
+    this.loading.set(false);
   }
 
-  isAdmin() {
-    return this.userRole() === 'admin';
+  login(): Promise<void> {
+    return this.userManager.signinRedirect();
+  }
+
+  async handleLoginCallback(): Promise<void> {
+    const user = await this.userManager.signinRedirectCallback();
+    this.currentUser.set(user);
   }
 
   getEmail(): string {
-    return this.email();
+    return (this.currentUser()?.profile?.['email'] as string) ?? '';
   }
 
   getDisplayName(): string {
-    const email = this.email();
+    const email = this.getEmail();
     if (!email) return '';
     const namePart = email.split('@')[0];
     return namePart
@@ -34,20 +56,14 @@ export class Auth {
       .join(' ');
   }
 
-  login(email: string, password: string, asAdmin: boolean = false): void {
-    console.log('Mock login with', email, password);
-    this.loggedIn.set(true);
-    this.userRole.set(asAdmin ? 'admin' : 'guest');
-    this.email.set(email);
+  async logout(): Promise<void> {
+    await this.userManager.removeUser();
+    this.currentUser.set(null);
+    const logoutUrl = `${environment.cognito.domain}/logout?client_id=${environment.cognito.clientId}&logout_uri=${encodeURIComponent(window.location.origin + '/')}`;
+    window.location.href = logoutUrl;
   }
 
-  logout(): void {
-    this.loggedIn.set(false);
-    this.userRole.set('guest');
-    this.email.set('');
-  }
-
-  getToken(): string | null {
-    return this.loggedIn() ? this.mockToken : null;
+  getIdToken(): string | null {
+    return this.currentUser()?.id_token ?? null;
   }
 }

@@ -2,12 +2,12 @@
   <h1>Habitaciones</h1>
 
   <div class="rooms-grid">
-    @for (room of rooms; track room.number) {
+    @for (room of rooms; track room.id) {
       <article class="room-card">
-        <img [src]="getImage(room.number)" [alt]="'Habitación ' + room.number" />
+        <img [src]="getImage(room)" [alt]="room.nombre" />
         <div class="room-info">
-          <h3>Habitación {{ room.number }} — {{ typeLabels[room.type] }}</h3>
-          <span class="status" [class]="getStatus(room.number)">{{ statusLabels[getStatus(room.number)] }}</span>
+          <h3>{{ room.nombre }} — {{ typeLabels[room.tipo] }}</h3>
+          <span class="status" [class]="getStatus(room.id)">{{ statusLabels[getStatus(room.id)] }}</span>
         </div>
       </article>
     }

@@ -10,12 +10,12 @@
 				<div class="room-picker">
 					<p class="picker-label">Elige una habitación</p>
 					<div class="rooms-grid">
-						@for (room of rooms; track room.number) {
-							<article class="room-card" (click)="selectRoom(room.number)">
-								<img [src]="roomImage(room.number)" [alt]="'Habitación ' + room.number" />
+						@for (room of rooms; track room.id) {
+							<article class="room-card" (click)="selectRoom(room.id.toString())">
+								<img [src]="roomImage(room)" [alt]="room.nombre" />
 								<div class="room-info">
-									<h3>Habitación {{ room.number }} — {{ roomTypeLabels[room.type] }}</h3>
-									<span class="price">${{ room.pricePerNight }} / noche</span>
+									<h3>{{ room.nombre }} — {{ roomTypeLabels[room.tipo] }}</h3>
+									<span class="price">${{ room.precioPorNoche }} / noche</span>
 								</div>
 							</article>
 						}

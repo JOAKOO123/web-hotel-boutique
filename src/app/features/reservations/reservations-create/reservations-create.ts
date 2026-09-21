@@ -5,6 +5,7 @@ import { Rooms } from '../services/rooms';
 import { RoomAvailability } from '../services/room-availability';
 import { Auth } from '../../../core/auth/auth';
 import { Reservation } from '../models/reservation.model';
+import { Habitacion } from '../models/room.model';
 import { BookingCalendar } from '../booking-calendar/booking-calendar';
 import { roomTypeLabels } from '../../../shared/labels';
 
@@ -32,22 +33,23 @@ export class ReservationsCreate implements OnInit {
 
   ngOnInit(): void {
     const preselected = this.route.snapshot.queryParamMap.get('room');
-    if (preselected && this.rooms.some(room => room.number === preselected)) {
+    if (preselected && this.rooms.some(room => room.id.toString() === preselected)) {
       this.selectRoom(preselected);
     }
   }
 
   get selectedRoomPrice(): number {
-    const room = this.rooms.find(r => r.number === this.roomNumber);
-    return room ? room.pricePerNight : 0;
+    const room = this.rooms.find(r => r.id.toString() === this.roomNumber);
+    return room ? room.precioPorNoche : 0;
   }
 
   get selectedRoomImage(): string | null {
-    return this.roomNumber ? this.roomsService.getImage(this.roomNumber) : null;
+    const selectedRoom = this.rooms.find(room => room.id.toString() === this.roomNumber);
+    return selectedRoom ? this.roomsService.getImage(selectedRoom) : null;
   }
 
-  roomImage(roomNumber: string): string {
-    return this.roomsService.getImage(roomNumber);
+  roomImage(habitacion: Habitacion): string {
+    return this.roomsService.getImage(habitacion);
   }
 
   onRangeSelected(range: { checkIn: string; checkOut: string }): void {
@@ -75,9 +77,9 @@ export class ReservationsCreate implements OnInit {
   }
 
   onSubmit(): void {
-    const room = this.rooms.find(r => r.number === this.roomNumber);
+    const room = this.rooms.find(r => r.id.toString() === this.roomNumber);
     const nights = this.nightsBetween(this.checkInDate, this.checkOutDate);
-    const totalAmount = room ? room.pricePerNight * nights : 0;
+    const totalAmount = room ? room.precioPorNoche * nights : 0;
 
     // TODO: replace with real HTTP POST to ms-reservation via API Gateway on deployment
     const newReservation: Reservation = {

@@ -12,7 +12,8 @@ export const roomStatusLabels: Record<string, string> = {
 };
 
 export const roomTypeLabels: Record<string, string> = {
-  single: 'Individual',
-  double: 'Doble',
-  suite: 'Suite'
+  INDIVIDUAL: 'Individual',
+  DOBLE: 'Doble',
+  SUITE: 'Suite',
+  FAMILIAR: 'Familiar'
 };

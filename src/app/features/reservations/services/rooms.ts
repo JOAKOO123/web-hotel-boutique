@@ -1,23 +1,23 @@
 import { Injectable, signal } from '@angular/core';
-import { Room } from '../models/room.model';
+import { Habitacion } from '../models/room.model';
 
 @Injectable({ providedIn: 'root' })
 export class Rooms {
   // TODO: replace with real HTTP call to ms-reservation via API Gateway on deployment
-  private mockRooms = signal<Room[]>([
-    { number: '101', type: 'single', pricePerNight: 45000 },
-    { number: '102', type: 'single', pricePerNight: 45000 },
-    { number: '204', type: 'double', pricePerNight: 65000 },
-    { number: '205', type: 'double', pricePerNight: 65000 },
-    { number: '305', type: 'suite', pricePerNight: 120000 },
-    { number: '306', type: 'suite', pricePerNight: 120000 }
+  private mockRooms = signal<Habitacion[]>([
+    { id: 101, nombre: 'Habitación 101', tipo: 'INDIVIDUAL', capacidad: 1, precioPorNoche: 45000, disponible: true, descripcion: 'Un espacio íntimo y confortable.', imagenUrl: null },
+    { id: 102, nombre: 'Habitación 102', tipo: 'INDIVIDUAL', capacidad: 1, precioPorNoche: 45000, disponible: true, descripcion: 'Un espacio íntimo y confortable.', imagenUrl: null },
+    { id: 204, nombre: 'Habitación 204', tipo: 'DOBLE', capacidad: 2, precioPorNoche: 65000, disponible: true, descripcion: 'Amplitud y luz natural.', imagenUrl: null },
+    { id: 205, nombre: 'Habitación 205', tipo: 'DOBLE', capacidad: 2, precioPorNoche: 65000, disponible: true, descripcion: 'Amplitud y luz natural.', imagenUrl: null },
+    { id: 305, nombre: 'Suite 305', tipo: 'SUITE', capacidad: 2, precioPorNoche: 120000, disponible: true, descripcion: 'Living independiente y vista privilegiada.', imagenUrl: null },
+    { id: 306, nombre: 'Suite 306', tipo: 'SUITE', capacidad: 2, precioPorNoche: 120000, disponible: true, descripcion: 'Living independiente y vista privilegiada.', imagenUrl: null }
   ]);
 
   getAll() {
     return this.mockRooms();
   }
 
-  getImage(roomNumber: string): string {
-    return `https://picsum.photos/seed/room-${roomNumber}/960/640`;
+  getImage(habitacion: Habitacion): string {
+    return habitacion.imagenUrl || `https://picsum.photos/seed/${encodeURIComponent(habitacion.nombre)}/960/640`;
   }
 }

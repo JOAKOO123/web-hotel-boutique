@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../../core/auth/auth';
 
 @Component({
@@ -9,10 +9,9 @@ import { Auth } from '../../core/auth/auth';
   styleUrl: './header.scss'
 })
 export class Header {
-  constructor(public auth: Auth, private router: Router) {}
+  constructor(public auth: Auth) {}
 
-  onLogout(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
+  async onLogout(): Promise<void> {
+    await this.auth.logout();
   }
 }

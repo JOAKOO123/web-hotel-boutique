@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Rooms } from '../../reservations/services/rooms';
 import { RoomAvailability } from '../../reservations/services/room-availability';
 import { roomStatusLabels, roomTypeLabels } from '../../../shared/labels';
+import { Habitacion } from '../../reservations/models/room.model';
 
 @Component({
   selector: 'app-rooms-status',
@@ -18,11 +19,11 @@ export class RoomsStatus {
   statusLabels = roomStatusLabels;
   typeLabels = roomTypeLabels;
 
-  getStatus(roomNumber: string) {
-    return this.roomAvailability.getStatus(roomNumber);
+  getStatus(roomId: number) {
+    return this.roomAvailability.getStatus(roomId.toString());
   }
 
-  getImage(roomNumber: string): string {
-    return this.roomsService.getImage(roomNumber);
+  getImage(habitacion: Habitacion): string {
+    return this.roomsService.getImage(habitacion);
   }
 }
