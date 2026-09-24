@@ -1,7 +1,8 @@
 export const reservationStatusLabels: Record<string, string> = {
-  confirmed: 'Confirmada',
-  pending: 'Pendiente',
-  cancelled: 'Cancelada'
+  CONFIRMADA: 'Confirmada',
+  CHECK_IN: 'Check-in realizado',
+  CHECK_OUT: 'Check-out realizado',
+  CANCELADA: 'Cancelada'
 };
 
 export const roomStatusLabels: Record<string, string> = {

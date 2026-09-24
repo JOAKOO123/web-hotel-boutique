@@ -1,10 +1,14 @@
-export interface Reservation {
-  id: string;
-  guestName: string;
-  guestEmail: string;
-  roomNumber: string;
-  checkInDate: string;
-  checkOutDate: string;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  totalAmount: number;
+export interface Reserva {
+  id: number;
+  habitacionNombre: string;
+  usuarioEmail: string;
+  fechaCheckin: string;
+  fechaCheckout: string;
+  estado: 'CONFIRMADA' | 'CHECK_IN' | 'CHECK_OUT' | 'CANCELADA';
+}
+
+export interface ReservaRequest {
+  habitacionId: number;
+  fechaCheckin: string;
+  fechaCheckout: string;
 }

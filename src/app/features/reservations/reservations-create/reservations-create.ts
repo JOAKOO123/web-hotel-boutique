@@ -3,8 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Reservations } from '../services/reservations';
 import { Rooms } from '../services/rooms';
 import { RoomAvailability } from '../services/room-availability';
-import { Auth } from '../../../core/auth/auth';
-import { Reservation } from '../models/reservation.model';
+import { ReservaRequest } from '../models/reservation.model';
 import { Habitacion } from '../models/room.model';
 import { BookingCalendar } from '../booking-calendar/booking-calendar';
 import { roomTypeLabels } from '../../../shared/labels';
@@ -20,11 +19,10 @@ export class ReservationsCreate implements OnInit {
   private reservationsService = inject(Reservations);
   private roomsService = inject(Rooms);
   private roomAvailability = inject(RoomAvailability);
-  private auth = inject(Auth);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  rooms = this.roomsService.getAll();
+  rooms: Habitacion[] = [];
   roomTypeLabels = roomTypeLabels;
 
   roomNumber = '';
@@ -32,10 +30,13 @@ export class ReservationsCreate implements OnInit {
   checkOutDate = '';
 
   ngOnInit(): void {
-    const preselected = this.route.snapshot.queryParamMap.get('room');
-    if (preselected && this.rooms.some(room => room.id.toString() === preselected)) {
-      this.selectRoom(preselected);
-    }
+    this.roomsService.getAll().subscribe(rooms => {
+      this.rooms = rooms;
+      const preselected = this.route.snapshot.queryParamMap.get('room');
+      if (preselected && this.rooms.some(room => room.id.toString() === preselected)) {
+        this.selectRoom(preselected);
+      }
+    });
   }
 
   get selectedRoomPrice(): number {
@@ -77,25 +78,16 @@ export class ReservationsCreate implements OnInit {
   }
 
   onSubmit(): void {
-    const room = this.rooms.find(r => r.id.toString() === this.roomNumber);
-    const nights = this.nightsBetween(this.checkInDate, this.checkOutDate);
-    const totalAmount = room ? room.precioPorNoche * nights : 0;
-
-    // TODO: replace with real HTTP POST to ms-reservation via API Gateway on deployment
-    const newReservation: Reservation = {
-      id: crypto.randomUUID(),
-      guestName: this.auth.getDisplayName(),
-      guestEmail: this.auth.getEmail(),
-      roomNumber: this.roomNumber,
-      checkInDate: this.checkInDate,
-      checkOutDate: this.checkOutDate,
-      status: 'confirmed',
-      totalAmount
+    const request: ReservaRequest = {
+      habitacionId: Number(this.roomNumber),
+      fechaCheckin: this.checkInDate,
+      fechaCheckout: this.checkOutDate
     };
 
-    this.reservationsService.add(newReservation);
-    this.roomAvailability.confirm(this.roomNumber);
-    this.router.navigate(['/my-reservations']);
+    this.reservationsService.create(request).subscribe(() => {
+      this.roomAvailability.confirm(this.roomNumber);
+      this.router.navigate(['/my-reservations']);
+    });
   }
 
   onCancel(): void {

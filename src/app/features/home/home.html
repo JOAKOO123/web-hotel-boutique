@@ -31,15 +31,17 @@
 <section class="suites">
   <h2>Nuestras suites</h2>
   <div class="suites-grid">
-    @for (room of rooms; track room.id) {
-      <article class="suite-card" (click)="onSuiteClick(room)">
-        <img [src]="roomImage(room)" [alt]="room.nombre" />
-        <div class="suite-info">
-          <h3>{{ room.nombre }} — {{ roomTypeLabels[room.tipo] }}</h3>
-          <p>{{ room.descripcion || roomDescription(room.tipo) }}</p>
-          <span class="price">${{ room.precioPorNoche }} / noche</span>
-        </div>
-      </article>
+    @if (rooms | async; as roomList) {
+      @for (room of roomList; track room.id) {
+        <article class="suite-card" (click)="onSuiteClick(room)">
+          <img [src]="roomImage(room)" [alt]="room.nombre" />
+          <div class="suite-info">
+            <h3>{{ room.nombre }} — {{ roomTypeLabels[room.tipo] }}</h3>
+            <p>{{ room.descripcion || roomDescription(room.tipo) }}</p>
+            <span class="price">${{ room.precioPorNoche }} / noche</span>
+          </div>
+        </article>
+      }
     }
   </div>
 </section>
