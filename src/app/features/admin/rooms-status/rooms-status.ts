@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Rooms } from '../../reservations/services/rooms';
 import { RoomAvailability } from '../../reservations/services/room-availability';
@@ -7,7 +8,7 @@ import { Habitacion } from '../../reservations/models/room.model';
 @Component({
   selector: 'app-rooms-status',
   standalone: true,
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './rooms-status.html',
   styleUrl: './rooms-status.scss'
 })

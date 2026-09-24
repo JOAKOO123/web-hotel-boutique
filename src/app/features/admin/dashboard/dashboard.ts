@@ -17,17 +17,19 @@ export class Dashboard implements AfterViewInit {
   @ViewChild('revenueChart') revenueChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('occupancyChart') occupancyChartRef!: ElementRef<HTMLCanvasElement>;
 
-  totalRevenue = this.stats.getTotalRevenue();
-  occupancyRate = this.stats.getOccupancyRate();
+  totalRevenue = 0;
+  occupancyRate = 0;
 
   ngAfterViewInit(): void {
-    this.renderRevenueChart();
-    this.renderOccupancyChart();
+    this.stats.getTotalRevenue().subscribe(totalRevenue => this.totalRevenue = totalRevenue);
+    this.stats.getOccupancyRate().subscribe(occupancyRate => this.occupancyRate = occupancyRate);
+    this.stats.getRevenueByRoom().subscribe(data => this.renderRevenueChart(data));
+    this.stats.getMonthlyOccupancy().subscribe(data => this.renderOccupancyChart(data));
   }
 
-  private renderRevenueChart(): void {
-    const data = this.stats.getRevenueByRoom();
-
+  private renderRevenueChart(data: ReturnType<DashboardStats['getRevenueByRoom']> extends infer Result
+    ? Result extends import('rxjs').Observable<infer Value> ? Value : never
+    : never): void {
     new Chart(this.revenueChartRef.nativeElement, {
       type: 'bar',
       data: {
@@ -45,9 +47,9 @@ export class Dashboard implements AfterViewInit {
     });
   }
 
-  private renderOccupancyChart(): void {
-    const data = this.stats.getMonthlyOccupancy();
-
+  private renderOccupancyChart(data: ReturnType<DashboardStats['getMonthlyOccupancy']> extends infer Result
+    ? Result extends import('rxjs').Observable<infer Value> ? Value : never
+    : never): void {
     new Chart(this.occupancyChartRef.nativeElement, {
       type: 'bar',
       data: {
