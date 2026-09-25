@@ -15,22 +15,16 @@
       </tr>
     </thead>
     <tbody>
-      @if (reservations | async; as reservationList) {
-        @for (reservation of reservationList; track reservation.id) {
-          <tr>
-            <td>{{ reservation.usuarioEmail }}</td>
-            <td>{{ reservation.habitacionNombre }}</td>
-            <td>{{ reservation.fechaCheckin }}</td>
-            <td>{{ reservation.fechaCheckout }}</td>
-            <td>
-              <span class="status" [class]="reservation.estado">{{ statusLabels[reservation.estado] }}</span>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="5">Aún no hay reservas.</td>
-          </tr>
-        }
+      @for (reservation of reservations(); track reservation.id) {
+        <tr>
+          <td>{{ reservation.usuarioEmail }}</td>
+          <td>{{ reservation.habitacionNombre }}</td>
+          <td>{{ reservation.fechaCheckin }}</td>
+          <td>{{ reservation.fechaCheckout }}</td>
+          <td><span class="status" [class]="reservation.estado">{{ statusLabels[reservation.estado] }}</span></td>
+        </tr>
+      } @empty {
+        <tr><td colspan="5">Aún no hay reservas.</td></tr>
       }
     </tbody>
   </table>

@@ -1,5 +1,4 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Rooms } from '../reservations/services/rooms';
@@ -9,7 +8,7 @@ import { roomTypeLabels } from '../../shared/labels';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe, FormsModule],
+  imports: [FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -17,11 +16,18 @@ export class Home {
   private roomsService = inject(Rooms);
   private router = inject(Router);
 
-  rooms = this.roomsService.getAll();
+  rooms = signal<Habitacion[]>([]);
   roomTypeLabels = roomTypeLabels;
   checkIn = '';
   checkOut = '';
   guests = 1;
+
+  constructor() {
+    this.roomsService.getAvailable().subscribe({
+      next: rooms => this.rooms.set(rooms),
+      error: err => console.error('Error loading rooms', err)
+    });
+  }
 
   onSearch(): void {
     this.router.navigate(['/reservations/new'], {

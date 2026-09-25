@@ -1,21 +1,25 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Reservations } from '../services/reservations';
-import { Auth } from '../../../core/auth/auth';
+import { Reserva } from '../models/reservation.model';
 import { reservationStatusLabels } from '../../../shared/labels';
 
 @Component({
   selector: 'app-my-reservations',
   standalone: true,
-  imports: [AsyncPipe, RouterLink],
+  imports: [RouterLink],
   templateUrl: './my-reservations.html',
   styleUrl: './my-reservations.scss'
 })
 export class MyReservations {
   private reservationsService = inject(Reservations);
-  private auth = inject(Auth);
-
-  reservations = this.reservationsService.getMine();
+  reservations = signal<Reserva[]>([]);
   statusLabels = reservationStatusLabels;
+
+  constructor() {
+    this.reservationsService.getMine().subscribe({
+      next: data => this.reservations.set(data),
+      error: err => console.error('Error loading reservations', err)
+    });
+  }
 }

@@ -1,9 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Reservations } from '../services/reservations';
 import { Rooms } from '../services/rooms';
 import { RoomAvailability } from '../services/room-availability';
-import { ReservaRequest } from '../models/reservation.model';
 import { Habitacion } from '../models/room.model';
 import { BookingCalendar } from '../booking-calendar/booking-calendar';
 import { roomTypeLabels } from '../../../shared/labels';
@@ -22,31 +21,36 @@ export class ReservationsCreate implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  rooms: Habitacion[] = [];
+  rooms = signal<Habitacion[]>([]);
   roomTypeLabels = roomTypeLabels;
 
   roomNumber = '';
   checkInDate = '';
   checkOutDate = '';
+  errorMessage = '';
+  saving = false;
 
   ngOnInit(): void {
-    this.roomsService.getAll().subscribe(rooms => {
-      this.rooms = rooms;
-      const preselected = this.route.snapshot.queryParamMap.get('room');
-      if (preselected && this.rooms.some(room => room.id.toString() === preselected)) {
-        this.selectRoom(preselected);
-      }
+    this.roomsService.getAvailable().subscribe({
+      next: rooms => {
+        this.rooms.set(rooms);
+        const preselected = this.route.snapshot.queryParamMap.get('room');
+        if (preselected && rooms.some(room => room.id.toString() === preselected)) {
+          this.selectRoom(preselected);
+        }
+      },
+      error: err => console.error('Error loading rooms', err)
     });
   }
 
   get selectedRoomPrice(): number {
-    const room = this.rooms.find(r => r.id.toString() === this.roomNumber);
+    const room = this.rooms().find(r => r.id.toString() === this.roomNumber);
     return room ? room.precioPorNoche : 0;
   }
 
   get selectedRoomImage(): string | null {
-    const selectedRoom = this.rooms.find(room => room.id.toString() === this.roomNumber);
-    return selectedRoom ? this.roomsService.getImage(selectedRoom) : null;
+    const room = this.rooms().find(r => r.id.toString() === this.roomNumber);
+    return room ? this.roomsService.getImage(room) : null;
   }
 
   roomImage(habitacion: Habitacion): string {
@@ -61,6 +65,7 @@ export class ReservationsCreate implements OnInit {
   selectRoom(roomNumber: string): void {
     this.roomNumber = roomNumber;
     this.roomAvailability.startPending(roomNumber);
+    this.errorMessage = '';
   }
 
   changeRoom(): void {
@@ -68,31 +73,32 @@ export class ReservationsCreate implements OnInit {
     this.roomNumber = '';
     this.checkInDate = '';
     this.checkOutDate = '';
-  }
-
-  private nightsBetween(checkIn: string, checkOut: string): number {
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-    const diff = end.getTime() - start.getTime();
-    return Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
+    this.errorMessage = '';
   }
 
   onSubmit(): void {
-    const request: ReservaRequest = {
+    this.saving = true;
+    this.errorMessage = '';
+
+    this.reservationsService.create({
       habitacionId: Number(this.roomNumber),
       fechaCheckin: this.checkInDate,
       fechaCheckout: this.checkOutDate
-    };
-
-    this.reservationsService.create(request).subscribe(() => {
-      this.roomAvailability.confirm(this.roomNumber);
-      this.router.navigate(['/my-reservations']);
+    }).subscribe({
+      next: () => {
+        this.roomAvailability.release(this.roomNumber);
+        this.router.navigate(['/my-reservations']);
+      },
+      error: err => {
+        this.saving = false;
+        this.errorMessage = err?.error?.message || 'No se pudo crear la reserva. Verifica que la habitación esté disponible en esas fechas.';
+      }
     });
   }
 
   onCancel(): void {
     if (this.roomNumber) {
-      this.roomAvailability.cancel(this.roomNumber);
+      this.roomAvailability.release(this.roomNumber);
     }
     this.router.navigate(['/']);
   }
