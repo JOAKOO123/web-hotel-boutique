@@ -1,5 +1,11 @@
 <div class="login-container">
-  <h1>Iniciar sesión</h1>
-  <p class="note">Serás redirigido a nuestro proveedor de identidad seguro (AWS Cognito).</p>
-  <button type="button" (click)="onLogin()">Continuar con Cognito</button>
+  <h1>Inicia sesión o crea tu cuenta</h1>
+  <p class="note" *ngIf="isForReservation">
+    Necesitas una cuenta para completar tu reserva. Al terminar, volverás automáticamente aquí.
+  </p>
+  <p class="note" *ngIf="!isForReservation">
+    Serás redirigido a nuestro proveedor de identidad seguro (AWS Cognito).
+  </p>
+  <button type="button" (click)="onLogin()">Ya tengo cuenta — Iniciar sesión</button>
+  <button type="button" class="btn-secondary" (click)="onSignup()">Crear cuenta nueva</button>
 </div>

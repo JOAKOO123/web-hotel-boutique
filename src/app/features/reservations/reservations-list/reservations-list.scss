@@ -59,5 +59,51 @@
       &.pending::before { background: var(--color-brass); }
       &.cancelled::before { background: var(--color-rust); }
     }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .no-actions {
+      opacity: 0.4;
+    }
+
+    .btn-action {
+      border: 1px solid var(--color-ink);
+      background: transparent;
+      color: var(--color-ink);
+      padding: 0.35rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-ink);
+        color: var(--color-paper);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancelar {
+      border-color: var(--color-rust);
+      color: var(--color-rust);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-rust);
+        color: var(--color-paper);
+      }
+    }
+  }
+
+  .action-error {
+    color: var(--color-rust);
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
   }
 }

@@ -20,6 +20,17 @@
     }
   }
 
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
+
+    &:hover {
+      background-color: var(--color-ink);
+      color: var(--color-paper);
+    }
+  }
+
   .note {
     font-size: 0.85rem;
     opacity: 0.7;

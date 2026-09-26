@@ -2,6 +2,11 @@ import { Injectable, signal, computed } from '@angular/core';
 import { UserManager, User } from 'oidc-client-ts';
 import { environment } from '../../../environments/environment';
 
+export interface LoginOptions {
+  returnUrl?: string;
+  signup?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class Auth {
   private userManager = new UserManager({
@@ -31,13 +36,17 @@ export class Auth {
     this.loading.set(false);
   }
 
-  login(): Promise<void> {
-    return this.userManager.signinRedirect();
+  login(options?: LoginOptions): Promise<void> {
+    return this.userManager.signinRedirect({
+      state: options?.returnUrl,
+      extraQueryParams: options?.signup ? { screen_hint: 'signup' } : undefined
+    });
   }
 
-  async handleLoginCallback(): Promise<void> {
+  async handleLoginCallback(): Promise<string | null> {
     const user = await this.userManager.signinRedirectCallback();
     this.currentUser.set(user);
+    return (user.state as string | undefined) ?? null;
   }
 
   getEmail(): string {
