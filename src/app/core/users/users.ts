@@ -16,7 +16,7 @@ export interface SyncUsuarioRequest {
 @Injectable({ providedIn: 'root' })
 export class Users {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.usuariosApiUrl}/usuarios`;
+  private baseUrl = `${environment.bffApiUrl}/usuarios`;
 
   sync(request: SyncUsuarioRequest) {
     return this.http.post<UsuarioPerfil>(`${this.baseUrl}/sync`, request);

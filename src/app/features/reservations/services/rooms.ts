@@ -6,7 +6,7 @@ import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class Rooms {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.reservasApiUrl}/habitaciones`;
+  private baseUrl = `${environment.bffApiUrl}/habitaciones`;
 
   getAvailable() {
     return this.http.get<Habitacion[]>(`${this.baseUrl}/disponibles`);

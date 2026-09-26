@@ -6,7 +6,7 @@ import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class Reservations {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.reservasApiUrl}/reservas`;
+  private baseUrl = `${environment.bffApiUrl}/reservas`;
 
   create(request: ReservaRequest) {
     return this.http.post<Reserva>(this.baseUrl, request);
