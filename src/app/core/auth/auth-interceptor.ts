@@ -1,28 +1,27 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { from } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { from, switchMap } from 'rxjs';
 import { Auth } from './auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(Auth);
+  const authService = inject(Auth);
 
-  // NO interceptar peticiones internas de MSAL
-  if (req.url.includes('login.microsoftonline.com') || 
-      req.url.includes('graph.microsoft.com') ||
-      req.url.includes('.neon.tech')) { // Neon JWKS
+  // Si la petición va a los servidores de Microsoft, no inyectamos el token
+  if (req.url.includes('://microsoftonline.com') || req.url.includes('://microsoft.com')) {
     return next(req);
   }
 
-  return from(auth.getAccessToken()).pipe(
+  // Obtenemos el Access Token de Azure de forma asíncrona
+  return from(authService.getAccessToken()).pipe(
     switchMap(token => {
       if (token) {
-        const cloned = req.clone({
-          setHeaders: { Authorization: `Bearer ${token}` }
+        const clonedReq = req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`
+          }
         });
-        return next(cloned);
+        return next(clonedReq);
       }
-
       return next(req);
     })
   );

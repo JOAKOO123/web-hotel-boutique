@@ -19,28 +19,30 @@ export const routes: Routes = [
 	},
 	{
 		path: 'dashboard',
-		canActivate: [authGuard],
+		canActivate: [authGuard], // Permite la entrada base y tu Dashboard gestionará la UI por Signal
 		loadComponent: () =>
 			import('./features/admin/dashboard/dashboard').then(m => m.Dashboard)
 	},
 	{
 		path: 'reservations',
 		canActivate: [roleGuard],
-		data: { roles: ['ADMIN'] },
+		data: { roles: ['ADMIN'] }, // Vista administrativa/global de reservas
 		loadComponent: () =>
 			import('./features/reservations/reservations-list/reservations-list')
 				.then(m => m.ReservationsList)
 	},
 	{
 		path: 'reservations/new',
-		canActivate: [authGuard],
+		canActivate: [roleGuard],
+		data: { roles: ['CLIENTE'] }, // Corregido: Solo el cliente/huésped puede generar una reserva
 		loadComponent: () =>
 			import('./features/reservations/reservations-create/reservations-create')
 				.then(m => m.ReservationsCreate)
 	},
 	{
 		path: 'my-reservations',
-		canActivate: [authGuard],
+		canActivate: [roleGuard],
+		data: { roles: ['CLIENTE'] }, // Corregido: Solo el cliente/huésped visualiza su historial propio
 		loadComponent: () =>
 			import('./features/reservations/my-reservations/my-reservations')
 				.then(m => m.MyReservations)
@@ -55,9 +57,8 @@ export const routes: Routes = [
 	{
 		path: 'admin/rooms',
 		canActivate: [roleGuard],
-		data: { roles: ['ADMIN'] },
+		data: { roles: ['ADMIN'] }, // Control de catálogo e inventario físico de unidades (Habitaciones)
 		loadComponent: () =>
 			import('./features/admin/rooms-status/rooms-status').then(m => m.RoomsStatus)
 	}
 ];
-

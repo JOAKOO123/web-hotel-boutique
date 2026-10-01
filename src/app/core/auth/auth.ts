@@ -12,6 +12,7 @@ export class Auth {
   private msalConfig = {
     auth: {
       clientId: environment.entra.clientId,
+      // URL corregida agregando login y el tenantId dinámico
       authority: `https://login.microsoftonline.com/${environment.entra.tenantId}/v2.0`,
       redirectUri: `${window.location.origin}/auth/callback`
     },
@@ -28,15 +29,32 @@ export class Auth {
 
   isAuthenticated = computed(() => !!this.currentAccount());
 
+  // Métodos de roles corregidos para abarcar cualquier claim de roles disponible
   isAdmin = computed(() => {
-    const claims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
-    const roles = claims?.['roles'] as string[] | undefined;
+    const activeClaims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
+    const cachedClaims = this.currentAccount()?.idTokenClaims as Record<string, unknown> | undefined;
+    const accessTokenClaims = this.authResult() as unknown as Record<string, unknown> | undefined;
+    
+    const roles = (
+      activeClaims?.['roles'] || 
+      cachedClaims?.['roles'] || 
+      (accessTokenClaims?.['claims'] as Record<string, unknown>)?.['roles']
+    ) as string[] | undefined;
+    
     return !!roles?.includes('ADMIN');
   });
 
   isCliente = computed(() => {
-    const claims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
-    const roles = claims?.['roles'] as string[] | undefined;
+    const activeClaims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
+    const cachedClaims = this.currentAccount()?.idTokenClaims as Record<string, unknown> | undefined;
+    const accessTokenClaims = this.authResult() as unknown as Record<string, unknown> | undefined;
+    
+    const roles = (
+      activeClaims?.['roles'] || 
+      cachedClaims?.['roles'] || 
+      (accessTokenClaims?.['claims'] as Record<string, unknown>)?.['roles']
+    ) as string[] | undefined;
+    
     return !!roles?.includes('CLIENTE');
   });
 
@@ -44,14 +62,12 @@ export class Auth {
     try {
       await this.pca.initialize();
 
-      // handleRedirectPromise debe ejecutarse primero para capturar el token de Entra.
       const result = await this.pca.handleRedirectPromise();
       if (result) {
         console.log('Token capturado del redirect:', result);
         this.authResult.set(result);
         this.currentAccount.set(result.account);
       } else {
-        // Si no hay redirect, verifica si ya hay una sesión almacenada.
         const accounts = this.pca.getAllAccounts();
         if (accounts.length > 0) {
           this.currentAccount.set(accounts[0]);
@@ -103,11 +119,14 @@ export class Auth {
   }
 
   async logout(): Promise<void> {
+    const account = this.currentAccount();
     this.currentAccount.set(null);
     this.authResult.set(null);
 
+    // Redirección explícita de logout limpia de MSAL
     await this.pca.logoutRedirect({
-      postLogoutRedirectUri: `${window.location.origin}/`
+      account: account ?? undefined,
+      postLogoutRedirectUri: `${window.location.origin}/login`
     });
   }
 
@@ -121,6 +140,7 @@ export class Auth {
         scopes: [environment.entra.scope],
         account: this.currentAccount()!
       });
+      this.authResult.set(result);
       return result.accessToken;
     } catch (error) {
       console.error('Token acquisition error:', error);
