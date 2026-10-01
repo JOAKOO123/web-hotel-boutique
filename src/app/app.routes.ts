@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './core/auth/admin-guard';
-import { authGuard } from './core/auth/auth-guard';
+import { authGuard } from './core/auth/auth.guard';
+import { roleGuard } from './core/auth/role.guard';
+import { AuthCallbackComponent } from './core/auth/auth-callback.component';
 
 export const routes: Routes = [
 	{
@@ -14,12 +15,18 @@ export const routes: Routes = [
 	},
 	{
 		path: 'auth/callback',
+		component: AuthCallbackComponent
+	},
+	{
+		path: 'dashboard',
+		canActivate: [authGuard],
 		loadComponent: () =>
-			import('./core/auth/auth-callback/auth-callback').then(m => m.AuthCallback)
+			import('./features/admin/dashboard/dashboard').then(m => m.Dashboard)
 	},
 	{
 		path: 'reservations',
-		canActivate: [authGuard, adminGuard],
+		canActivate: [roleGuard],
+		data: { roles: ['ADMIN'] },
 		loadComponent: () =>
 			import('./features/reservations/reservations-list/reservations-list')
 				.then(m => m.ReservationsList)
@@ -40,13 +47,15 @@ export const routes: Routes = [
 	},
 	{
 		path: 'admin',
-		canActivate: [authGuard, adminGuard],
+		canActivate: [roleGuard],
+		data: { roles: ['ADMIN'] },
 		loadComponent: () =>
 			import('./features/admin/dashboard/dashboard').then(m => m.Dashboard)
 	},
 	{
 		path: 'admin/rooms',
-		canActivate: [authGuard, adminGuard],
+		canActivate: [roleGuard],
+		data: { roles: ['ADMIN'] },
 		loadComponent: () =>
 			import('./features/admin/rooms-status/rooms-status').then(m => m.RoomsStatus)
 	}

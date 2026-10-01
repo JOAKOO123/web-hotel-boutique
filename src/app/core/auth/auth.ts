@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { UserManager, User } from 'oidc-client-ts';
+import { PublicClientApplication, AuthenticationResult, AccountInfo } from '@azure/msal-browser';
 import { environment } from '../../../environments/environment';
 
 export interface LoginOptions {
@@ -9,70 +9,126 @@ export interface LoginOptions {
 
 @Injectable({ providedIn: 'root' })
 export class Auth {
-  private userManager = new UserManager({
-    authority: `https://cognito-idp.${environment.cognito.region}.amazonaws.com/${environment.cognito.userPoolId}`,
-    client_id: environment.cognito.clientId,
-    redirect_uri: `${window.location.origin}/auth/callback`,
-    post_logout_redirect_uri: `${window.location.origin}/`,
-    response_type: 'code',
-    scope: 'openid email phone',
-    automaticSilentRenew: false,
-    loadUserInfo: true
-  });
+  private msalConfig = {
+    auth: {
+      clientId: environment.entra.clientId,
+      authority: `https://login.microsoftonline.com/${environment.entra.tenantId}/v2.0`,
+      redirectUri: `${window.location.origin}/auth/callback`
+    },
+    cache: {
+      cacheLocation: 'localStorage' as const,
+      storeAuthStateInCookie: false
+    }
+  };
 
-  private currentUser = signal<User | null>(null);
+  private pca = new PublicClientApplication(this.msalConfig);
+  private currentAccount = signal<AccountInfo | null>(null);
+  private authResult = signal<AuthenticationResult | null>(null);
   loading = signal(true);
 
-  isAuthenticated = computed(() => !!this.currentUser() && !this.currentUser()!.expired);
+  isAuthenticated = computed(() => !!this.currentAccount());
 
   isAdmin = computed(() => {
-    const groups = this.currentUser()?.profile?.['cognito:groups'] as string[] | undefined;
-    return !!groups?.includes('ADMIN');
+    const claims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
+    const roles = claims?.['roles'] as string[] | undefined;
+    return !!roles?.includes('ADMIN');
+  });
+
+  isCliente = computed(() => {
+    const claims = this.authResult()?.idTokenClaims as Record<string, unknown> | undefined;
+    const roles = claims?.['roles'] as string[] | undefined;
+    return !!roles?.includes('CLIENTE');
   });
 
   async initialize(): Promise<void> {
-    const user = await this.userManager.getUser();
-    this.currentUser.set(user);
-    this.loading.set(false);
+    try {
+      await this.pca.initialize();
+
+      // handleRedirectPromise debe ejecutarse primero para capturar el token de Entra.
+      const result = await this.pca.handleRedirectPromise();
+      if (result) {
+        console.log('Token capturado del redirect:', result);
+        this.authResult.set(result);
+        this.currentAccount.set(result.account);
+      } else {
+        // Si no hay redirect, verifica si ya hay una sesión almacenada.
+        const accounts = this.pca.getAllAccounts();
+        if (accounts.length > 0) {
+          this.currentAccount.set(accounts[0]);
+          try {
+            const tokenResult = await this.pca.acquireTokenSilent({
+              scopes: [environment.entra.scope],
+              account: accounts[0]
+            });
+            this.authResult.set(tokenResult);
+          } catch (error) {
+            console.warn('Silent token acquisition failed:', error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Auth initialization error:', error);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  login(options?: LoginOptions): Promise<void> {
-    return this.userManager.signinRedirect({
-      state: options?.returnUrl,
-      extraQueryParams: options?.signup ? { screen_hint: 'signup' } : undefined
+  login(options?: LoginOptions): void {
+    this.pca.loginRedirect({
+      scopes: [environment.entra.scope],
+      prompt: 'select_account'
     });
   }
 
   async handleLoginCallback(): Promise<string | null> {
-    const user = await this.userManager.signinRedirectCallback();
-    this.currentUser.set(user);
-    return (user.state as string | undefined) ?? null;
+    try {
+      const result = await this.pca.handleRedirectPromise();
+      if (result) {
+        this.authResult.set(result);
+        this.currentAccount.set(result.account);
+      }
+      return null;
+    } catch (error) {
+      console.error('Login callback error:', error);
+      return null;
+    }
   }
 
   getEmail(): string {
-    return (this.currentUser()?.profile?.['email'] as string) ?? '';
+    return this.currentAccount()?.username ?? '';
   }
 
   getDisplayName(): string {
-    const email = this.getEmail();
-    if (!email) return '';
-    const namePart = email.split('@')[0];
-    return namePart
-      .replace(/[._]+/g, ' ')
-      .split(' ')
-      .filter(Boolean)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    return this.currentAccount()?.name ?? '';
   }
 
   async logout(): Promise<void> {
-    await this.userManager.removeUser();
-    this.currentUser.set(null);
-    const logoutUrl = `${environment.cognito.domain}/logout?client_id=${environment.cognito.clientId}&logout_uri=${encodeURIComponent(window.location.origin + '/')}`;
-    window.location.href = logoutUrl;
+    this.currentAccount.set(null);
+    this.authResult.set(null);
+
+    await this.pca.logoutRedirect({
+      postLogoutRedirectUri: `${window.location.origin}/`
+    });
+  }
+
+  async getAccessToken(): Promise<string | null> {
+    if (!this.currentAccount()) {
+      return null;
+    }
+
+    try {
+      const result = await this.pca.acquireTokenSilent({
+        scopes: [environment.entra.scope],
+        account: this.currentAccount()!
+      });
+      return result.accessToken;
+    } catch (error) {
+      console.error('Token acquisition error:', error);
+      return null;
+    }
   }
 
   getIdToken(): string | null {
-    return this.currentUser()?.id_token ?? null;
+    return this.authResult()?.idToken ?? null;
   }
 }
