@@ -6,6 +6,6 @@ export const environment = {
     clientId: 'YOUR_COGNITO_APP_CLIENT_ID',
     domain: 'https://YOUR_COGNITO_DOMAIN'
   },
-  usuariosApiUrl: 'http://localhost:8081',
-  reservasApiUrl: 'http://localhost:8082'
+  // En desarrollo, el BFF. En la nube, la URL del API Gateway.
+  bffApiUrl: 'http://localhost:8080'
 };
