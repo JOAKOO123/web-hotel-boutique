@@ -8,6 +8,7 @@
 			<a routerLink="/reservations" routerLinkActive="active">Reservas</a>
 			<a routerLink="/admin" routerLinkActive="active">Panel</a>
 			<a routerLink="/admin/rooms" routerLinkActive="active">Habitaciones</a>
+			<a routerLink="/admin/rabbitmq" routerLinkActive="active">RabbitMQ</a>
 		}
 
 		@if (auth.isAuthenticated() && !auth.isAdmin()) {
