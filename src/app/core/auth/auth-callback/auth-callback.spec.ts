@@ -1,22 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { AuthCallback } from './auth-callback';
 
 describe('AuthCallback', () => {
-  let component: AuthCallback;
-  let fixture: ComponentFixture<AuthCallback>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AuthCallback],
+      providers: [
+        provideRouter([{ path: 'login', children: [] }]),
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(AuthCallback);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = TestBed.createComponent(AuthCallback);
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

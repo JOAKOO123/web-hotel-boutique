@@ -49,6 +49,11 @@ export const routes: Routes = [
 		canActivate: [authGuard, adminGuard],
 		loadComponent: () =>
 			import('./features/admin/rooms-status/rooms-status').then(m => m.RoomsStatus)
+	},
+	{
+		path: 'admin/rabbitmq',
+		canActivate: [authGuard, adminGuard],
+		loadComponent: () =>
+			import('./features/admin/rabbitmq/rabbitmq-admin').then(m => m.RabbitmqAdmin)
 	}
 ];
-

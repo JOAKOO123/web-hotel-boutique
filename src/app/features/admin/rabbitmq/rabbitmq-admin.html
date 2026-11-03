@@ -1,0 +1,92 @@
+<div class="rabbit-admin">
+  <h1>Administración de RabbitMQ</h1>
+  <p class="intro">Crea y elimina la topología del sistema. Los cambios se ven en el Management UI de RabbitMQ.</p>
+
+  @if (mensaje(); as m) {
+    <div class="mensaje" [class.ok]="m.tipo === 'ok'" [class.error]="m.tipo === 'error'">{{ m.texto }}</div>
+  }
+
+  <section class="panel">
+    <h2>Crear cola</h2>
+    <form (ngSubmit)="crearCola()">
+      <label>Nombre
+        <input name="colaNombre" [(ngModel)]="cola.nombre" required>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="colaDurable" [(ngModel)]="cola.durable"> Durable
+      </label>
+      <button type="submit" [disabled]="ocupado() || !cola.nombre">Crear cola</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Crear exchange</h2>
+    <form (ngSubmit)="crearExchange()">
+      <label>Nombre
+        <input name="exchangeNombre" [(ngModel)]="exchange.nombre" required>
+      </label>
+      <label>Tipo
+        <select name="exchangeTipo" [(ngModel)]="exchange.tipo">
+          <option value="topic">topic</option>
+          <option value="direct">direct</option>
+        </select>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="exchangeDurable" [(ngModel)]="exchange.durable"> Durable
+      </label>
+      <button type="submit" [disabled]="ocupado() || !exchange.nombre">Crear exchange</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Crear binding</h2>
+    <form (ngSubmit)="crearBinding()">
+      <label>Exchange
+        <input name="bindingExchange" [(ngModel)]="binding.exchange" required>
+      </label>
+      <label>Cola
+        <input name="bindingCola" [(ngModel)]="binding.cola" required>
+      </label>
+      <label>Routing key
+        <input name="bindingRk" [(ngModel)]="binding.routingKey" required>
+      </label>
+      <button type="submit" [disabled]="ocupado() || !binding.exchange || !binding.cola || !binding.routingKey">Crear binding</button>
+    </form>
+  </section>
+
+  <section class="panel danger">
+    <h2>Eliminar cola</h2>
+    <form (ngSubmit)="borrarCola()">
+      <label>Nombre
+        <input name="borrarColaNombre" [(ngModel)]="eliminarCola.nombre" required>
+      </label>
+      <button type="submit" [disabled]="ocupado() || !eliminarCola.nombre">Eliminar cola</button>
+    </form>
+  </section>
+
+  <section class="panel danger">
+    <h2>Eliminar exchange</h2>
+    <form (ngSubmit)="borrarExchange()">
+      <label>Nombre
+        <input name="borrarExchangeNombre" [(ngModel)]="eliminarExchange.nombre" required>
+      </label>
+      <button type="submit" [disabled]="ocupado() || !eliminarExchange.nombre">Eliminar exchange</button>
+    </form>
+  </section>
+
+  <section class="panel danger">
+    <h2>Eliminar binding</h2>
+    <form (ngSubmit)="borrarBinding()">
+      <label>Exchange
+        <input name="borrarBindingExchange" [(ngModel)]="eliminarBinding.exchange" required>
+      </label>
+      <label>Cola
+        <input name="borrarBindingCola" [(ngModel)]="eliminarBinding.cola" required>
+      </label>
+      <label>Routing key
+        <input name="borrarBindingRk" [(ngModel)]="eliminarBinding.routingKey" required>
+      </label>
+      <button type="submit" [disabled]="ocupado() || !eliminarBinding.exchange || !eliminarBinding.cola || !eliminarBinding.routingKey">Eliminar binding</button>
+    </form>
+  </section>
+</div>
