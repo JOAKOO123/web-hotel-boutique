@@ -1,0 +1,64 @@
+<div class="reservations-list">
+  <div class="header-row">
+    <h1>Reservas</h1>
+    <a routerLink="/reservations/new" class="btn-new">+ Nueva reserva</a>
+  </div>
+
+  <table class="reservations-table">
+    <thead>
+      <tr>
+        <th>Huésped</th>
+        <th>Habitación</th>
+        <th>Entrada</th>
+        <th>Salida</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (reservation of reservations(); track reservation.id) {
+        <tr>
+          <td>{{ reservation.usuarioEmail }}</td>
+          <td>{{ reservation.habitacionNombre }}</td>
+          <td>{{ reservation.fechaCheckin }}</td>
+          <td>{{ reservation.fechaCheckout }}</td>
+          <td><span class="status" [class]="reservation.estado">{{ statusLabels[reservation.estado] }}</span></td>
+          <td class="actions-cell">
+            @if (canCheckin(reservation)) {
+              <button
+                type="button"
+                class="btn-action btn-checkin"
+                [disabled]="processingId() === reservation.id"
+                (click)="onCheckin(reservation)">
+                Check-in
+              </button>
+            }
+            @if (canCheckout(reservation)) {
+              <button
+                type="button"
+                class="btn-action btn-checkout"
+                [disabled]="processingId() === reservation.id"
+                (click)="onCheckout(reservation)">
+                Check-out
+              </button>
+            }
+            @if (canCancelar(reservation)) {
+              <button
+                type="button"
+                class="btn-action btn-cancelar"
+                [disabled]="processingId() === reservation.id"
+                (click)="onCancelar(reservation)">
+                Cancelar
+              </button>
+            }
+            @if (!canCheckin(reservation) && !canCheckout(reservation) && !canCancelar(reservation)) {
+              <span class="no-actions">—</span>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">Aún no hay reservas.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>

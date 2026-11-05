@@ -1,0 +1,49 @@
+<div
+	class="reservation-form"
+	[class.has-background]="selectedRoomImage"
+	[style.background-image]="selectedRoomImage ? 'url(' + selectedRoomImage + ')' : null">
+	<div class="form-overlay">
+		<div class="form-card">
+			<h1>Nueva reserva</h1>
+
+			@if (!roomNumber) {
+				<div class="room-picker">
+					<p class="picker-label">Elige una habitación</p>
+					<div class="rooms-grid">
+						@for (room of rooms(); track room.id) {
+							<article class="room-card" (click)="selectRoom(room.id.toString())">
+								<img [src]="roomImage(room)" [alt]="room.nombre" />
+								<div class="room-info">
+									<h3>{{ room.nombre }} — {{ roomTypeLabels[room.tipo] }}</h3>
+									<span class="price">${{ room.precioPorNoche }} / noche</span>
+								</div>
+							</article>
+						}
+					</div>
+				</div>
+			} @else {
+				<div class="selected-room-bar">
+					<span>Habitación seleccionada: {{ roomNumber }}</span>
+					<button type="button" class="btn-change" (click)="changeRoom()">Cambiar habitación</button>
+				</div>
+
+				<div class="calendar-wrapper">
+					<label>Selecciona las fechas</label>
+					<app-booking-calendar
+						[pricePerNight]="selectedRoomPrice"
+						(rangeSelected)="onRangeSelected($event)">
+					</app-booking-calendar>
+				</div>
+
+								@if (errorMessage) {
+									<p class="error-message">{{ errorMessage }}</p>
+								}
+
+								<div class="actions">
+					<button type="button" class="btn-cancel" (click)="onCancel()">Cancelar</button>
+					<button type="button" class="btn-submit" [disabled]="!checkInDate || !checkOutDate" (click)="onSubmit()">Guardar reserva</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

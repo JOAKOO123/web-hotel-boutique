@@ -1,0 +1,46 @@
+<section class="hero">
+  <p class="eyebrow">Hotel Boutique</p>
+  <h1>Un descanso hecho a tu medida</h1>
+
+  <div class="search-widget">
+    <div class="field">
+      <label for="checkIn">Entrada</label>
+      <input id="checkIn" type="date" name="checkIn" [(ngModel)]="checkIn" />
+    </div>
+    <div class="field">
+      <label for="checkOut">Salida</label>
+      <input id="checkOut" type="date" name="checkOut" [(ngModel)]="checkOut" />
+    </div>
+    <div class="field">
+      <label for="guests">Huéspedes</label>
+      <select id="guests" name="guests" [(ngModel)]="guests">
+        <option [value]="1">1</option>
+        <option [value]="2">2</option>
+        <option [value]="3">3</option>
+        <option [value]="4">4</option>
+      </select>
+    </div>
+    <button type="button" (click)="onSearch()">Reservar ahora</button>
+  </div>
+</section>
+
+<section class="about">
+  <p>Hotel Boutique combina diseño de autor y hospitalidad cercana en el corazón de la ciudad. Cada habitación fue pensada con materiales nobles y una atención dedicada que nos ha posicionado entre los alojamientos boutique mejor evaluados de Santiago.</p>
+</section>
+
+<section class="suites">
+  <h2>Nuestras suites</h2>
+  <div class="suites-grid">
+    @for (room of rooms(); track room.id) {
+        <article class="suite-card" (click)="onSuiteClick(room)">
+          <img [src]="roomImage(room)" [alt]="room.nombre" />
+          <div class="suite-info">
+            <h3>{{ room.nombre }} — {{ roomTypeLabels[room.tipo] }}</h3>
+            <p>{{ room.descripcion || roomDescription(room.tipo) }}</p>
+            <span class="price">${{ room.precioPorNoche }} / noche</span>
+          </div>
+        </article>
+    }
+  </div>
+</section>
+
